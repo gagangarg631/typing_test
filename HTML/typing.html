@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/CSS/util.css">
+    <link rel="stylesheet" href="/CSS/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="typing_app">
+        <p id="picture_text"></p>
+
+        <div class="typing_test_inputs bd" style="margin: 30px auto;display: flex;width: 100%;">
+            <div class="editable_area" style="display: inline-block;width: 70%;">
+                <textarea id="text_area" style="width: 100%;height: 250px;font-size: 20px;display: inline-block;border-radius: 20px;padding: 20px;"></textarea>
+            </div>  
+            
+    
+            <div id="timer_options" style="width: 30%;height: 100px;margin: 20px;">
+                
+                <div style="width: 80%;height: 60%;" class="btn-group me-2" role="group" aria-label="First group">
+                    <button type="button" name="time_selected" class="btn btn-primary">1</button>
+                    <button type="button" name="time_selected" class="btn btn-primary">3</button>
+                    <button type="button" name="time_selected" class="btn btn-primary">5</button>
+                    <input  type="number" class="form-control" name="" id="selected_time" style="height: 100%;width: 70px;font-size: 20px;" max="10" min="1">
+                    <button class="btn btn-primary">Min</button>
+
+                </div>
+                
+                <div id="timer">
+                    <button id="min" disabled name="time_selected" class="btn btn-dark">00</button>
+                    <button id="sec" disabled name="time_selected" class="btn btn-dark">00</button>
+                </div>
+               
+            </div>
+        </div>  
+    </div>
+    
+    <span id="speed"></span>
+
+    <script>
+        let text_shown = 'An operating system is a software programme required to manage and operate a computing device like smartphones, tablets, computers, supercomputers, web servers, cars, network towers, smartwatches, etc. It is the operating system that eliminates the need to know coding language to interact with computing devices. It is a layer of graphical user interface (GUI), which acts as a platform between the user and the computer hardware. Moreover, the operating system manages the software side of a computer and controls programs execution.';
+
+
+        let app = {
+            selected_time: 0,
+        }
+
+        let text_shown_el = document.getElementById('picture_text');
+
+        let text_list = text_shown.split(' ');
+        text_list.forEach(word => {
+            text_shown_el.insertAdjacentHTML('beforeend', `<span style="margin:0 3px;font-weight: bold;">${word}</span>`);
+        })
+
+        let input_text_area = document.getElementById('text_area');
+
+        let timer_el = document.getElementById('timer');
+
+
+        let words = text_shown_el.childNodes;
+
+        let curr_index = -1;
+        let curr_word_input;
+        let curr_el;
+        let curr_word_shown;
+
+        let space_pressed = false;
+
+        let _time = {
+            min: 0,
+            sec: 10,
+        }
+
+        function assignNextWord(){
+            curr_index++;
+            curr_el = words[curr_index];
+            curr_el.style.color = 'green';
+            curr_word_shown = curr_el.innerText;
+            curr_word_input = "";
+        }
+
+
+
+        function startTime(){
+            _time.sec = document.getElementById('selected_time').value;
+            _time.sec = 60;
+            timer_el.querySelector('#sec').innerText = _time.sec;
+
+            let timer_stop_id = setInterval(function(){
+                _time.sec--;
+                timer_el.querySelector('#sec').innerText = _time.sec;
+            }, 1000)
+
+            setTimeout(function(){
+                console.log(curr_index);
+                input_text_area.disabled = true;
+                clearInterval(timer_stop_id);
+                document.getElementById('speed').innerText = `speed: ${curr_index} words per ${_time.sec} sec`;
+            }, _time.sec * 1000);
+        }
+
+        assignNextWord();
+        
+
+
+        input_text_area.addEventListener('input', function(ev){
+            
+            if (curr_index == 0 && curr_word_input == ''){
+                startTime();
+            }
+
+            if (ev.data == ' '){
+                space_pressed = true;
+                if (curr_word_input == curr_word_shown){
+                    curr_el.style.color = 'black';
+                }else{
+                    curr_el.style.color = 'red';
+                }
+
+                assignNextWord();
+
+            }else if (ev.data == null){
+                if (space_pressed){
+                    space_pressed = false;
+                }
+                curr_word_input = curr_word_input.slice(0,-1);
+                console.log(curr_word_input);
+            }
+            else{
+                if (space_pressed && curr_word_input == ""){
+                    space_pressed = false;
+                    curr_word_input += ev.data;
+                }else if (!space_pressed && (curr_word_input != "" || curr_index == 0)){
+                    curr_word_input += ev.data; 
+                }
+            }
+        })
+
+
+        document.getElementById('selected_time').addEventListener('change', function(ev){
+            if (this.value > 10)
+                this.value = 10;
+            else if (this.value < 1)
+                this.value = 1;
+
+            if (this.value != 0)
+                Array.from(document.querySelectorAll('#timer_options [name="time_selected"]')).forEach(el => {
+                    el.disabled = true;
+                })
+            
+            app.selected_time = this.value;
+        })
+
+        Array.from(document.querySelectorAll('#timer_options [name="time_selected"]')).forEach(el => {
+            el.addEventListener('click', function(){
+                app.selected_time = this.innerText;
+            })
+        })
+    </script>
+</body>
+</html>
