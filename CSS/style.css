@@ -2,7 +2,7 @@
     font-size: 18px;
     display: flex;
     flex-wrap: wrap;
-    border: 2px solid blue;
+    /* border: 2px solid blue; */
     border-radius: 50px;
     padding: 20px;
     background-color: rgb(212, 204, 204);
@@ -11,7 +11,7 @@
 }
 
 #typing_app{
-    border: 1px solid black;
+    /* border: 1px solid black; */
     width: 95vw;
     height: 90vh;
     margin: 20px auto;
