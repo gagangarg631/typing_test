@@ -1,0 +1,30 @@
+#picture_text{
+    font-size: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    /* border: 2px solid blue; */
+    border-radius: 50px;
+    padding: 20px;
+    background-color: rgb(212, 204, 204);
+    color: rgb(107, 45, 207);
+    line-height: 22px;
+}
+
+#typing_app{
+    /* border: 1px solid black; */
+    width: 95vw;
+    height: 90vh;
+    margin: 20px auto;
+}
+
+#timer_options .btn{
+    font-size: 20px;
+}
+
+#timer_options div{
+    margin: 10px;
+}
+
+#text_area::-webkit-scrollbar{
+    display: none;
+}
